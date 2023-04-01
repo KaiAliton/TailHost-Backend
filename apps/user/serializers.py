@@ -1,4 +1,4 @@
-from rest_framework import serializers
+
 from ..abstract.serializers import AbstractSerializer
 from .models import User
 
