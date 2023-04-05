@@ -1,22 +1,24 @@
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from api.v1.abstract.views import AbstractViewSet
-from apps.post.models import Post
-from apps.post.serializers import PostSerializer
+from apps.track.models import Track
+from apps.track.serializers import TrackSerializer
 from apps.auth.permissions import UserPermission
 from rest_framework.response import Response
 
 
-class PostViewSet(AbstractViewSet):
+class TrackViewSet(AbstractViewSet):
     http_method_names = ('post', 'get', 'put', 'delete')
     permission_classes = (UserPermission,)
-    serializer_class = PostSerializer
+    serializer_class = TrackSerializer
 
     def get_queryset(self):
-        return Post.objects.all()
+        if self.request.user.is_superuser and self.kwargs['track_pk'] == '0':
+            return Track.objects.all()
+        return Track.objects.filter(approved=1)
 
     def get_object(self):
-        obj = Post.objects.get_object_by_public_id(self.kwargs['pk'])
+        obj = Track.objects.get_object_by_public_id(self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
 
@@ -28,22 +30,22 @@ class PostViewSet(AbstractViewSet):
 
     @action(methods=['post'], detail=True)
     def like(self, request, *args, **kwargs):
-        post = self.get_object()
+        track = self.get_object()
         user = self.request.user
 
-        user.like_post(post)
+        user.like_track(track)
 
-        serializer = self.serializer_class(post)
+        serializer = self.serializer_class(track)
 
         return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
     def remove_like(self, request, *args, **kwargs):
-        post = self.get_object()
+        track = self.get_object()
         user = self.request.user
 
-        user.remove_like_post(post)
+        user.remove_like_track(track)
 
-        serializer = self.serializer_class(post)
+        serializer = self.serializer_class(track)
 
         return Response(serializer.data)

@@ -39,14 +39,23 @@ class UserManager(BaseUserManager, AbstractManager):
 
 class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
 
-    def like(self, post):
+    def like_post(self, post):
         return self.posts_liked.add(post)
 
-    def remove_like(self, post):
+    def like_track(self, track):
+        return self.tracks_liked.add(track)
+
+    def remove_like_post(self, post):
         return self.posts_liked.remove(post)
 
-    def has_liked(self, post):
+    def remove_like_track(self, track):
+        return self.tracks_liked.remove(track)
+
+    def has_liked_post(self, post):
         return self.posts_liked.filter(pk=post.pk).exists()
+
+    def has_liked_track(self, track):
+        return self.tracks_liked.filter(pk=track.pk).exists()
 
     public_id = models.UUIDField(db_index=True, unique=True,
                                  default=uuid.uuid4, editable=False)
@@ -57,7 +66,9 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(db_index=True, unique=True)
     is_active = models.BooleanField(default=True)
     posts_liked = models.ManyToManyField("post.Post", related_name='liked_by')
+    tracks_liked = models.ManyToManyField("track.Track", related_name='liked_by')
     is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'email'

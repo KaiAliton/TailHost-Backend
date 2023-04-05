@@ -9,7 +9,7 @@ class PostManager(AbstractManager):
 class Post(AbstractModel):
     author = models.ForeignKey(to='user.User', on_delete=models.CASCADE)
     body = models.TextField()
-    image = models.ImageField(upload_to='static/')
+    image = models.ImageField(upload_to='static/posts/')
     edited = models.BooleanField(default=False)
     objects = PostManager()
 

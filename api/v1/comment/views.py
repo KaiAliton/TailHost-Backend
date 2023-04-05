@@ -1,4 +1,5 @@
 from django.http.response import Http404
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from api.v1.abstract.views import AbstractViewSet
 from apps.comment.models import Comment
@@ -12,21 +13,17 @@ class CommentViewSet(AbstractViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser and self.kwargs['post_pk'] == '0':
             return Comment.objects.all()
-
         post_pk = self.kwargs['post_pk']
         if post_pk is None:
             return Http404
         queryset = Comment.objects.filter(post__public_id=post_pk)
-
         return queryset
 
     def get_object(self):
         obj = Comment.objects.get_object_by_public_id(self.kwargs['pk'])
-
         self.check_object_permissions(self.request, obj)
-
         return obj
 
     def create(self, request, *args, **kwargs):

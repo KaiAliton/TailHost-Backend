@@ -2,16 +2,13 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from apps.abstract.serializers import AbstractSerializer
 from apps.user.serializers import UserSerializer
-from apps.comment.serializers import CommentSerializer
 from apps.post.models import Post
 from apps.user.models import User
-from apps.comment.models import Comment
 
 
-class PostSerializer(AbstractSerializer):
+class TrackSerializer(AbstractSerializer):
     author = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field='public_id')
-
     liked = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
 
@@ -19,8 +16,7 @@ class PostSerializer(AbstractSerializer):
         request = self.context.get('request', None)
         if request is None or request.user.is_anonymous:
             return False
-
-        return request.user.has_liked_post(instance)
+        return request.user.has_liked_track(instance)
 
     def get_likes_count(self, instance):
         return instance.liked_by.count()
@@ -34,8 +30,6 @@ class PostSerializer(AbstractSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         author = User.objects.get_object_by_public_id(rep["author"])
-        comments = Comment.objects.filter(post__public_id=rep['id'])
-        rep["comments"] = CommentSerializer(comments, many=True).data
         rep["author"] = UserSerializer(author).data
         return rep
 
@@ -47,6 +41,6 @@ class PostSerializer(AbstractSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'author', 'body', 'edited',
-                  'created', 'updated', 'liked', 'image', 'likes_count']
+        fields = ['id', 'author', 'title', 'edited',
+                  'created', 'updated', 'liked', 'cover', 'likes_count', 'music', 'video']
         read_only_fields = ["edited"]
