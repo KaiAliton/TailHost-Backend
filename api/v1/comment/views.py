@@ -13,6 +13,7 @@ class CommentViewSet(AbstractViewSet):
     serializer_class = CommentSerializer
 
     def get_queryset(self):
+        print("bebra")
         if self.request.user.is_superuser and self.kwargs['post_pk'] == '0':
             return Comment.objects.all()
         post_pk = self.kwargs['post_pk']

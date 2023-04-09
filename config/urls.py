@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_nested import routers
@@ -6,6 +8,7 @@ from api.v1.comment.views import CommentViewSet
 from api.v1.post.views import PostViewSet
 from api.v1.track.views import TrackViewSet
 from api.v1.user.views import UserViewSet
+
 
 router = routers.SimpleRouter()
 router.register(r'user', UserViewSet, basename='user')
@@ -24,3 +27,6 @@ urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/', include(posts_router.urls)),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models
 from ..abstract.models import AbstractModel, AbstractManager
 
 
@@ -11,12 +9,12 @@ class TrackManager(AbstractManager):
 
 
 class Track(AbstractModel):
-    author = models.ForeignKey(to="user.User", on_delete=models.CASCADE)
+    author = models.ForeignKey(to='user.User', on_delete=models.CASCADE)
     title = models.TextField()
-    cover = models.ImageField(upload_to='static/covers/')
+    cover = models.ImageField(upload_to='media/covers/')
     approved = models.BooleanField(default=0)
-    music = models.FileField(upload_to='static/music/')
-    video = models.FileField(upload_to='static/videos/', null=True, blank=True)
+    music = models.FileField(upload_to='media/music/')
+    video = models.FileField(upload_to='media/videos/', null=True, blank=True)
     edited = models.BooleanField(default=False)
     objects = TrackManager()
 

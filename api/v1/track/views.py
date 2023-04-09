@@ -1,5 +1,5 @@
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.v1.abstract.views import AbstractViewSet
 from apps.track.models import Track
 from apps.track.serializers import TrackSerializer
@@ -8,12 +8,12 @@ from rest_framework.response import Response
 
 
 class TrackViewSet(AbstractViewSet):
-    http_method_names = ('post', 'get', 'put', 'delete')
+    http_method_names = ('post', 'get', 'patch', 'delete')
     permission_classes = (UserPermission,)
     serializer_class = TrackSerializer
 
     def get_queryset(self):
-        if self.request.user.is_superuser and self.kwargs['track_pk'] == '0':
+        if not self.request.user.is_anonymous and self.request.user.is_superuser:
             return Track.objects.all()
         return Track.objects.filter(approved=1)
 
