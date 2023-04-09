@@ -28,6 +28,10 @@ class TrackViewSet(AbstractViewSet):
         self.perform_create(serializer)
         return Response(serializer.data)
 
+    @action(methods=['get'], detail=False)
+    def popular(self, request, *args, **kwargs):
+        return True
+
     @action(methods=['post'], detail=True)
     def like(self, request, *args, **kwargs):
         track = self.get_object()

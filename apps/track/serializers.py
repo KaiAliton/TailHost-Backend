@@ -29,8 +29,9 @@ class TrackSerializer(AbstractSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        if not self.context['request'].user.is_anonymous and self.context["request"].user.is_superuser:
-            rep['approved'] = instance.approved
+        if self.context:
+            if not self.context['request'].user.is_anonymous and self.context["request"].user.is_superuser:
+                rep['approved'] = instance.approved
         author = User.objects.get_object_by_public_id(rep["author"])
         rep["author"] = UserSerializer(author).data
         return rep

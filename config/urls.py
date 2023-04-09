@@ -5,6 +5,7 @@ from django.urls import path, include
 from rest_framework_nested import routers
 from api.auth.auth import RegisterViewSet, LoginViewSet, RefreshViewSet
 from api.v1.comment.views import CommentViewSet
+from api.v1.genre.views import GenreViewSet
 from api.v1.post.views import PostViewSet
 from api.v1.track.views import TrackViewSet
 from api.v1.user.views import UserViewSet
@@ -18,7 +19,7 @@ posts_router = routers.NestedSimpleRouter(router, r'post', lookup='post')
 posts_router.register(r'comment', CommentViewSet, basename='post-comment')
 
 router.register(r'track', TrackViewSet, basename='track')
-
+router.register(r'genre', GenreViewSet, basename='genre')
 router.register(r'auth/register', RegisterViewSet, basename='auth-register')
 router.register(r'auth/login', LoginViewSet, basename='auth-login')
 router.register(r'auth/refresh', RefreshViewSet, basename='auth-refresh')
