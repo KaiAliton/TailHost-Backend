@@ -1,12 +1,13 @@
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from apps.album.models import Album
+from apps.user.models import User
 from apps.abstract.serializers import AbstractSerializer
 from apps.user.serializers import UserSerializer
-from apps.track.models import Track
 from apps.user.models import User
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 
-class TrackSerializer(AbstractSerializer):
+class AlbumSerializer(AbstractSerializer):
     author = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field='public_id')
     liked = serializers.SerializerMethodField()
@@ -22,21 +23,8 @@ class TrackSerializer(AbstractSerializer):
         return instance.liked_by.count()
 
     def update(self, instance, validated_data):
-        if not instance.edited:
-            validated_data['edited'] = True
         instance = super().update(instance, validated_data)
         return instance
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        if self.context:
-            if not self.context['request'].user.is_anonymous and self.context["request"].user.is_superuser:
-                rep['approved'] = instance.approved
-        author = User.objects.get_object_by_public_id(rep["author"])
-        next = Track.objects.all().order_by("?").first()
-        rep["author"] = UserSerializer(author).data
-        rep["next"] = next.public_id
-        return rep
 
     def validate_author(self, value):
         if self.context["request"].user != value:
@@ -45,7 +33,6 @@ class TrackSerializer(AbstractSerializer):
         return value
 
     class Meta:
-        model = Track
-        fields = ['id', 'author', 'title', 'edited',
-                  'created', 'updated', 'liked', 'cover', 'likes_count', 'music', 'video']
-        read_only_fields = ["edited"]
+        model = Album
+        fields = ['id', 'author', 'title', 'cover', 'created', 'updated'
+                                                               'cover', 'liked', 'likes_count']

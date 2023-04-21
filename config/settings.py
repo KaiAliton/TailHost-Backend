@@ -13,7 +13,9 @@ SECRET_KEY = 'django-insecure-tktx_ewb1-yc-(+fvch8)%jot80z15r5*fazq_9!o*&g=0rq$)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_USER_MODEL = 'user.User'
 # Application definition
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework_swagger',
     'rest_framework_simplejwt',
 
     'apps.user.apps.UserConfig',
@@ -35,7 +38,9 @@ INSTALLED_APPS = [
     'apps.comment.apps.CommentConfig',
     'apps.track.apps.TrackConfig',
     'apps.genre.apps.GenreConfig',
+    'apps.album.apps.AlbumConfig',
 
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -55,6 +60,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

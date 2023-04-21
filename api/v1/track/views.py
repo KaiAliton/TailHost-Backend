@@ -1,3 +1,6 @@
+import datetime
+import time
+
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.v1.abstract.views import AbstractViewSet
@@ -30,7 +33,11 @@ class TrackViewSet(AbstractViewSet):
 
     @action(methods=['get'], detail=False)
     def popular(self, request, *args, **kwargs):
-        return True
+        tracks = Track.objects.filter(approved=1,
+                                      created__gte=(datetime.datetime.now() - datetime.timedelta(days=30))).order_by(
+            "?")
+        serializer = TrackSerializer(tracks, many=True)
+        return Response(serializer.data)
 
     @action(methods=['post'], detail=True)
     def like(self, request, *args, **kwargs):

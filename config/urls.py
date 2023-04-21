@@ -23,6 +23,7 @@ router.register(r'genre', GenreViewSet, basename='genre')
 router.register(r'auth/register', RegisterViewSet, basename='auth-register')
 router.register(r'auth/login', LoginViewSet, basename='auth-login')
 router.register(r'auth/refresh', RefreshViewSet, basename='auth-refresh')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),

@@ -2,16 +2,17 @@ from django.db import models
 from ..abstract.models import AbstractModel, AbstractManager
 
 
-class PostManager(AbstractManager):
+# Create your models here.
+
+class AlbumManager(AbstractManager):
     pass
 
 
-class Post(AbstractModel):
+class Album(AbstractModel):
     author = models.ForeignKey(to='user.User', on_delete=models.CASCADE)
-    body = models.TextField()
-    cover = models.ImageField(upload_to='covers')
-    edited = models.BooleanField(default=False)
-    objects = PostManager()
+    title = models.TextField()
+    cover = models.ImageField(upload_to='covers/')
+    objects = AlbumManager()
 
     def __str__(self):
         return f'{self.author.name}'

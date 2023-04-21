@@ -48,5 +48,5 @@ class PostSerializer(AbstractSerializer):
     class Meta:
         model = Post
         fields = ['id', 'author', 'body', 'edited',
-                  'created', 'updated', 'liked', 'image', 'likes_count']
+                  'created', 'updated', 'liked', 'cover', 'likes_count']
         read_only_fields = ["edited"]

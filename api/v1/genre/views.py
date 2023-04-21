@@ -31,10 +31,10 @@ class GenreViewSet(AbstractViewSet):
                  :10]
         genre_serializer = GenreSerializer(genre)
         track_serizalizer = TrackSerializer(tracks, many=True)
-        output = [
-            {"genre": genre_serializer.data},
-            {"tracks": track_serizalizer.data},
-        ]
+        output = {
+            "genre": genre_serializer.data,
+            "tracks": track_serizalizer.data,
+        }
         return Response(output)
 
     @action(methods=['get'], detail=True)
