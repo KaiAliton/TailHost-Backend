@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from apps.abstract.serializers import AbstractSerializer
+from apps.album.models import Album
+from apps.genre.models import Genre
 from apps.user.serializers import UserSerializer
 from apps.track.models import Track
 from apps.user.models import User
@@ -9,6 +11,10 @@ from apps.user.models import User
 class TrackSerializer(AbstractSerializer):
     author = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field='public_id')
+    album = serializers.SlugRelatedField(
+        queryset=Album.objects.all(), slug_field='public_id')
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(), slug_field='public_id')
     liked = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
 
@@ -38,6 +44,12 @@ class TrackSerializer(AbstractSerializer):
         rep["next"] = next.public_id
         return rep
 
+    def validate_album(self, value):
+        if self.context['request'].user != value.author:
+            raise ValidationError("check")
+        else:
+            raise ValidationError("good")
+
     def validate_author(self, value):
         if self.context["request"].user != value:
             raise ValidationError("You can't change author of track.")
@@ -46,6 +58,6 @@ class TrackSerializer(AbstractSerializer):
 
     class Meta:
         model = Track
-        fields = ['id', 'author', 'title', 'edited',
+        fields = ['id', 'author', 'title', 'edited', 'album', 'genre',
                   'created', 'updated', 'liked', 'cover', 'likes_count', 'music', 'video']
         read_only_fields = ["edited"]
