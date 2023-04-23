@@ -29,7 +29,6 @@ class AlbumSerializer(AbstractSerializer):
     def validate_author(self, value):
         if self.context["request"].user != value:
             raise ValidationError("You can't change author of track.")
-
         return value
 
     class Meta:

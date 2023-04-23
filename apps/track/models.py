@@ -28,4 +28,4 @@ class Track(AbstractModel):
     objects = TrackManager()
 
     def __str__(self):
-        return f'{self.author.name}'
+        return f'{self.title}'

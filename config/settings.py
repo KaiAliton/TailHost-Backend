@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'apps.track.apps.TrackConfig',
     'apps.genre.apps.GenreConfig',
     'apps.album.apps.AlbumConfig',
-
     'corsheaders',
 ]
 

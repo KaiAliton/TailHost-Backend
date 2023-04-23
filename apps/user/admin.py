@@ -1,9 +1,19 @@
 from django.contrib import admin
 from django import forms
-
+from django.utils.html import format_html
 from django.contrib.auth import get_user_model
 
+base_url = "/media/"
 UserProfile = get_user_model()
-admin.site.register(UserProfile)
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    def image_tag(self, obj):
+        return format_html('<img src="{}" style="max-width:200px; max-height:200px"/>'.format(base_url+obj.avatar.name))
+    
+    def cover_tag(self, obj):
+        return format_html('<img src="{}" style="max-width:200px; max-height:200px"/>'.format(base_url+obj.cover.name))
+    
+    list_display  = ('username','image_tag', 'cover_tag')
 
 # Register your models here.

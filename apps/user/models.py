@@ -61,13 +61,13 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
                                  default=uuid.uuid4, editable=False)
     username = models.CharField(db_index=True,
                                 max_length=255, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
     email = models.EmailField(db_index=True, unique=True)
     is_active = models.BooleanField(default=True)
-    posts_liked = models.ManyToManyField("post.Post", related_name='liked_by')
-    tracks_liked = models.ManyToManyField("track.Track", related_name='liked_by')
-    genres_liked = models.ManyToManyField("genre.Genre", related_name='liked_by')
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    cover = models.ImageField(upload_to='covers/', null=True, blank=True)
+    posts_liked = models.ManyToManyField("post.Post", related_name='liked_by', null=True, blank=True)
+    tracks_liked = models.ManyToManyField("track.Track", related_name='liked_by', null=True, blank=True)
+    genres_liked = models.ManyToManyField("genre.Genre", related_name='liked_by', null=True, blank=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
@@ -77,8 +77,4 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def __str__(self):
-        return f"{self.email}"
-
-    @property
-    def name(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.username}"
