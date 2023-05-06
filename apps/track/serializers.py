@@ -2,7 +2,9 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from apps.abstract.serializers import AbstractSerializer
 from apps.album.models import Album
+from apps.album.serializers import AlbumSerializer
 from apps.genre.models import Genre
+from apps.genre.serializers import GenreSerializer
 from apps.user.serializers import UserSerializer
 from apps.track.models import Track
 from apps.user.models import User
@@ -39,9 +41,11 @@ class TrackSerializer(AbstractSerializer):
             if not self.context['request'].user.is_anonymous and self.context["request"].user.is_superuser:
                 rep['approved'] = instance.approved
         author = User.objects.get_object_by_public_id(rep["author"])
-        next = Track.objects.all().order_by("?").first()
+        album = Album.objects.get_object_by_public_id(rep['album'])
+        genre = Genre.objects.get_object_by_public_id(rep["genre"])
+        rep["genre"] = GenreSerializer(genre).data
         rep["author"] = UserSerializer(author).data
-        rep["next"] = next.public_id
+        rep["album"] = AlbumSerializer(album).data
         return rep
 
     def validate_album(self, value):
@@ -58,6 +62,6 @@ class TrackSerializer(AbstractSerializer):
 
     class Meta:
         model = Track
-        fields = ['id', 'author', 'title', 'edited', 'album', 'genre',
-                  'created', 'updated', 'liked', 'cover', 'likes_count', 'music', 'video']
+        fields = ['id', 'author', 'title', 'album', 'genre',
+                  'created', 'liked', 'cover', 'likes_count', 'music', 'video']
         read_only_fields = ["edited"]

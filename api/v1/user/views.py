@@ -27,15 +27,20 @@ class UserViewSet(AbstractViewSet):
         return obj
 
     @action(methods=['get'], detail=True)
-    def videos(self, request, *args, **kwargs):
+    def tracks(self, request, *args, **kwargs):
         user = self.get_object()
+        serializer = self.get_serializer(user)
         tracks = Track.objects.filter(author=user).order_by("-created")
         track_serializer = TrackSerializer(tracks, many=True)
-        return Response(track_serializer.data)
+        output = {
+            "author": serializer.data,
+            "tracks": track_serializer.data
+        }
+        return Response(output)
 
     @action(methods=['get'], detail=True)
     def posts(self, request, *args, **kwargs):
         user = self.get_object()
-        posts = Post.objects.filter(author=user).order_by("-created")
+        posts = user.posts.all()
         post_serializer = PostSerializer(posts, many=True)
         return Response(post_serializer.data)

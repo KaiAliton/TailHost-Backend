@@ -11,7 +11,6 @@ from api.v1.post.views import PostViewSet
 from api.v1.track.views import TrackViewSet
 from api.v1.user.views import UserViewSet
 
-
 router = routers.SimpleRouter()
 router.register(r'user', UserViewSet, basename='user')
 

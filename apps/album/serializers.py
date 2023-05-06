@@ -10,17 +10,18 @@ from rest_framework.exceptions import ValidationError
 class AlbumSerializer(AbstractSerializer):
     author = serializers.SlugRelatedField(
         queryset=User.objects.all(), slug_field='public_id')
-    liked = serializers.SerializerMethodField()
-    likes_count = serializers.SerializerMethodField()
 
-    def get_liked(self, instance):
-        request = self.context.get('request', None)
-        if request is None or request.user.is_anonymous:
-            return False
-        return request.user.has_liked_track(instance)
+    # liked = serializers.SerializerMethodField()
+    # likes_count = serializers.SerializerMethodField()
 
-    def get_likes_count(self, instance):
-        return instance.liked_by.count()
+    # def get_liked(self, instance):
+    #    request = self.context.get('request', None)
+    #    if request is None or request.user.is_anonymous:
+    #        return False
+    #    return request.user.has_liked_track(instance)
+
+    # def get_likes_count(self, instance):
+    #    return instance.liked_by.count()
 
     def update(self, instance, validated_data):
         instance = super().update(instance, validated_data)
@@ -31,7 +32,13 @@ class AlbumSerializer(AbstractSerializer):
             raise ValidationError("You can't change author of track.")
         return value
 
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        author = User.objects.get_object_by_public_id(rep["author"])
+        author_serializer = UserSerializer(author)
+        rep["author"] = author_serializer.data
+        return rep
+
     class Meta:
         model = Album
-        fields = ['id', 'author', 'title', 'cover', 'created', 'updated'
-                                                               'cover', 'liked', 'likes_count']
+        fields = ['id', 'author', 'title', 'cover', 'created']

@@ -68,6 +68,7 @@ class User(AbstractModel, AbstractBaseUser, PermissionsMixin):
     posts_liked = models.ManyToManyField("post.Post", related_name='liked_by', null=True, blank=True)
     tracks_liked = models.ManyToManyField("track.Track", related_name='liked_by', null=True, blank=True)
     genres_liked = models.ManyToManyField("genre.Genre", related_name='liked_by', null=True, blank=True)
+    genres = models.ManyToManyField("genre.Genre", related_name='genres', null=True, blank=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)

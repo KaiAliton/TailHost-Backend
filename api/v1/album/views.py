@@ -30,3 +30,15 @@ class AlbumViewSet(AbstractViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def tracks(self, request, *args, **kwargs):
+        album = self.get_object()
+        album_serializer = AlbumSerializer(album)
+        tracks = album.tracks.all()
+        track_serializer = TrackSerializer(tracks, many=True)
+        output = {
+            "album": album_serializer.data,
+            "tracks": track_serializer.data
+        }
+        return Response(output)

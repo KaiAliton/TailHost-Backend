@@ -4,13 +4,15 @@ import time
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.v1.abstract.views import AbstractViewSet
+from api.v1.mixin.views import PaginatedResponseMixin
 from apps.track.models import Track
 from apps.track.serializers import TrackSerializer
 from apps.auth.permissions import UserPermission
 from rest_framework.response import Response
+from django.core.paginator import Paginator
 
 
-class TrackViewSet(AbstractViewSet):
+class TrackViewSet(PaginatedResponseMixin, AbstractViewSet):
     http_method_names = ('post', 'get', 'patch', 'delete')
     permission_classes = (UserPermission,)
     serializer_class = TrackSerializer
@@ -36,8 +38,17 @@ class TrackViewSet(AbstractViewSet):
         tracks = Track.objects.filter(approved=1,
                                       created__gte=(datetime.datetime.now() - datetime.timedelta(days=30))).order_by(
             "?")
+        page = self.paginate_queryset(tracks)
+        if page is not None:
+            serializer = TrackSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = TrackSerializer(tracks, many=True)
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=False)
+    def queue(self, request, *args, **kwargs):
+        tracks = Track.objects.filter(approved=1).order_by("?")
+        return self.paginated_response(tracks, TrackSerializer, page_size=5)
 
     @action(methods=['post'], detail=True)
     def like(self, request, *args, **kwargs):
